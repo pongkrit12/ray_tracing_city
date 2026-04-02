@@ -191,3 +191,34 @@ if use_fog:
             color = color + (fog_color - color) * t
 
         return color
+# ---------------------
+# class Box สำหรับทำตึก
+class Box(Object):
+    def __init__(self, center, width, height, depth, mat):
+        super().__init__()
+
+        self.quads = []
+        self.material = mat
+
+        x, y, z = center.x(), center.y(), center.z()
+        w = width / 2
+        d = depth / 2
+
+        # --- define 8 vertices ---
+        p0 = rtu.Vec3(x - w, 0, z - d)
+        p1 = rtu.Vec3(x + w, 0, z - d)
+        p2 = rtu.Vec3(x + w, 0, z + d)
+        p3 = rtu.Vec3(x - w, 0, z + d)
+
+        p4 = rtu.Vec3(x - w, height, z - d)
+        p5 = rtu.Vec3(x + w, height, z - d)
+        p6 = rtu.Vec3(x + w, height, z + d)
+        p7 = rtu.Vec3(x - w, height, z + d)
+
+        # --- create 6 faces using Quad ---
+        self.quads.append(Quad(p0, p1 - p0, p4 - p0, mat))  # front
+        self.quads.append(Quad(p2, p3 - p2, p6 - p2, mat))  # back
+        self.quads.append(Quad(p3, p0 - p3, p7 - p3, mat))  # left
+        self.quads.append(Quad(p1, p2 - p1, p5 - p1, mat))  # right
+        self.quads.append(Quad(p4, p5 - p4, p7 - p4, mat))  # top
+        self.quads.append(Quad(p0, p3 - p0, p1 - p0, mat))  # bottom
